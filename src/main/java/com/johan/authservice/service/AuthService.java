@@ -2,12 +2,12 @@ package com.johan.authservice.service;
 
 import com.johan.authservice.dto.AuthResponseDTO;
 import com.johan.authservice.entity.User;
-import com.johan.authservice.mapper.UserMapper;
 import com.johan.authservice.repository.UserRepository;
 import com.johan.authservice.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.Set;
+import com.johan.authservice.security.Role;
 import java.time.LocalDateTime;
 
 @Service
@@ -33,6 +33,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(password));
         user.setCreateAt(LocalDateTime.now());
         user.setEnabled(true);
+        user.setRoles(Set.of(Role.ROLE_USER));
         return userRepository.save(user);
     }
 

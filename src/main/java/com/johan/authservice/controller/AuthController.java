@@ -3,7 +3,9 @@ package com.johan.authservice.controller;
 import com.johan.authservice.dto.AuthResponseDTO;
 import com.johan.authservice.dto.LoginRequestDTO;
 import com.johan.authservice.dto.RegisterRequestDTO;
+import com.johan.authservice.dto.UserResponseDTO;
 import com.johan.authservice.entity.User;
+import com.johan.authservice.mapper.UserMapper;
 import com.johan.authservice.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,9 +24,12 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public User register(@Valid @RequestBody RegisterRequestDTO dto){
-        return authService.register(dto.getEmail(), dto.getPassword());
+    public UserResponseDTO register(@Valid @RequestBody RegisterRequestDTO dto){
+        return UserMapper.toDto(
+                authService.register(dto.getEmail(), dto.getPassword())
+        );
     }
+
 
     @PostMapping("/login")
     public AuthResponseDTO login(@RequestBody LoginRequestDTO dto) {

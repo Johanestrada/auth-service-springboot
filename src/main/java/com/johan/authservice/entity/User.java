@@ -1,11 +1,12 @@
 package com.johan.authservice.entity;
 
 
+import com.johan.authservice.security.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,5 +25,9 @@ public class User {
     private boolean enabled = true;
 
     private LocalDateTime createAt = LocalDateTime.now();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
 }
