@@ -1,4 +1,4 @@
-# Auth Service API 🔐
+# Auth Service API
 
 Servicio de autenticación y gestión de usuarios con **Spring Boot 4** y **JWT**. API moderna, segura y escalable lista para producción.
 
