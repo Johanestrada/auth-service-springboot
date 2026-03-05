@@ -11,9 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -34,20 +36,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         // Si no hay token, seguimos sin autenticar
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || authHeader.trim().isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
+        // Validar que empiece con "Bearer "
+        if (!authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Extraer el token después de "Bearer "
+        String token = authHeader.substring(7).trim();
+
+        // Manejar caso de "Bearer Bearer token" (duplicado)
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        // Validar que el token no esté vacío
+        if (token.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         if (jwtService.isTokenValid(token)) {
             String email = jwtService.extractEmail(token);
 
             List<GrantedAuthority> authorities = jwtService.extractRoles(token).stream()
                     .map(role -> new SimpleGrantedAuthority(role))
-                    .map(auth -> (GrantedAuthority) auth)
-                    .toList();
+                    .collect(Collectors.toList());
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(

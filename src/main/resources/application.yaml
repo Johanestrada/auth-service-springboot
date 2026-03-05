@@ -18,3 +18,10 @@ spring:
 jwt:
   secret: super-secret-key-very-long-min-256-bits-auth-service
   expiration: 3600000 # 1 hora en ms
+
+logging:
+  level:
+    org:
+      springdoc: DEBUG
+      springframework:
+        web: DEBUG
