@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -45,6 +44,26 @@ public class UserController {
         return Map.of(
                 "email", authentication.getName()
         );
+    }
+
+    @GetMapping("/user/profile")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Obtener perfil del usuario", description = "Devuelve los datos completos del perfil del usuario autenticado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Perfil obtenido correctamente"),
+            @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserResponseDTO> getProfile(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String email = authentication.getName();
+        UserResponseDTO profile = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(profile);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
