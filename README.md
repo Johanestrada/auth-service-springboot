@@ -163,7 +163,7 @@ src/main/java/com/johan/authservice/
 
 ## Contacto
 
-johan.estrada.proyectos@gmail.com
+johan.manuel.estrada.plaza@gmail.com
 
 ---
 
